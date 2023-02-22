@@ -22,17 +22,15 @@ public class ImageClassification {
 
     @PostMapping("/startPoint")
     @ResponseStatus(value = HttpStatus.OK)
-    public void startPoint(@RequestPart("myfile") MultipartFile myfile)throws IOException {
-
-        String fileName = myfile.getOriginalFilename();
+    public String startPoint(@RequestPart("myfile") MultipartFile myfile) throws IOException, InterruptedException {
 
         if(myfile.isEmpty()){
             System.out.println("input image provided is null at "+dtf.format(now));
-            return;
+            return "No image provided";
         }
 
-        System.out.println("sending an image to request queue at "+dtf.format(now));
-
+        String fileName = myfile.getOriginalFilename();
+        System.out.println("sending "+fileName+" image to request queue at "+dtf.format(now));
         //serialized image file
         String message= Base64.getEncoder().encodeToString(myfile.getBytes());
 
@@ -43,8 +41,9 @@ public class ImageClassification {
         System.out.println("Image sent to SQS");
 
         //read from sqs
-//        sqs.consume();
+//        return sqs.consume();
+        return "Job Failed";
     }
-    
+
 }
 
